@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>מתכוני סבתא ז״ל</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@300;400;500;700;900&family=Heebo:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --parchment:      #fdf8ed;
+      --parchment-mid:  #f5e9ce;
+      --parchment-dark: #ead9b0;
+      --ink:            #221409;
+      --ink-mid:        #4a3020;
+      --ink-light:      #7a5c40;
+      --red:            #8b1a1a;
+      --gold:           #b8851c;
+      --gold-light:     #e0b060;
+      --cream-white:    #fffcf5;
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Frank Ruhl Libre', Georgia, serif;
+      background-color: var(--parchment-mid);
+      background-image:
+        radial-gradient(ellipse 80% 60% at 15% 10%, rgba(184,133,28,0.12) 0%, transparent 55%),
+        radial-gradient(ellipse 60% 70% at 85% 90%, rgba(139,26,26,0.08) 0%, transparent 50%),
+        repeating-linear-gradient(transparent, transparent 27px, rgba(34,20,9,0.05) 27px, rgba(34,20,9,0.05) 28px);
+      color: var(--ink);
+      direction: rtl;
+      text-align: right;
+      min-height: 100vh;
+    }
+
+    /* ─── PAPER GRAIN OVERLAY ─── */
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.5;
+    }
+
+    /* ─── SCROLLBAR ─── */
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: var(--parchment-dark); }
+    ::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 0; }
+
+    /* ══════════════════════════════════════
+       COVER
+    ══════════════════════════════════════ */
+    #cover {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      padding: 60px 24px 100px;
+      background-color: var(--parchment-dark);
+      background-image:
+        radial-gradient(ellipse at 25% 20%, rgba(184,133,28,0.25) 0%, transparent 45%),
+        radial-gradient(ellipse at 75% 80%, rgba(139,26,26,0.14) 0%, transparent 45%),
+        radial-gradient(ellipse at 50% 50%, rgba(234,217,176,0.5) 0%, transparent 70%),
+        repeating-linear-gradient(transparent, transparent 27px, rgba(34,20,9,0.06) 27px, rgba(34,20,9,0.06) 28px);
+      overflow: hidden;
+      text-align: center;
+    }
+
+    /* Coffee stain */
+    #cover::before {
+      content: '';
+      position: absolute;
+      bottom: 18%;
+      left: 8%;
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      background: radial-gradient(circle, transparent 40%, rgba(120,80,30,0.08) 41%, rgba(120,80,30,0.06) 55%, transparent 56%);
+      pointer-events: none;
+    }
+
+    /* Decorative double border */
+    .cover-border {
+      position: absolute;
+      inset: 24px;
+      border: 1px solid rgba(184,133,28,0.35);
+      pointer-events: none;
+    }
+    .cover-border::after {
+      content: '';
+      position: absolute;
+      inset: 5px;
+      border: 1px solid rgba(184,133,28,0.18);
+    }
+
+    .cover-photo-wrap {
+      position: relative;
+      margin-bottom: 36px;
+      animation: fadeUp 1s ease both;
+    }
+
+    .cover-photo {
+      width: 200px;
+      height: 260px;
+      object-fit: cover;
+      object-position: top center;
+      border: 6px solid var(--cream-white);
+      box-shadow:
+        0 0 0 1px var(--gold),
+        0 0 0 8px rgba(184,133,28,0.12),
+        8px 12px 40px rgba(34,20,9,0.35),
+        -4px -4px 0 var(--parchment-dark);
+      transform: rotate(-2.5deg);
+      filter: sepia(25%) contrast(1.05) brightness(0.98);
+      display: block;
+    }
+
+    /* Photo corner fold */
+    .cover-photo-wrap::after {
+      content: '';
+      position: absolute;
+      bottom: -6px;
+      left: -10px;
+      width: 28px;
+      height: 28px;
+      background: linear-gradient(135deg, var(--parchment-mid) 50%, rgba(184,133,28,0.25) 50%);
+      transform: rotate(-2.5deg);
+      box-shadow: -2px 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .cover-ornament {
+      color: var(--gold);
+      font-size: 1.1rem;
+      letter-spacing: 10px;
+      margin-bottom: 20px;
+      opacity: 0.75;
+      animation: fadeUp 1s 0.2s ease both;
+    }
+
+    .cover-title {
+      font-size: clamp(3rem, 7vw, 5.5rem);
+      font-weight: 900;
+      color: var(--ink);
+      line-height: 1.1;
+      margin-bottom: 10px;
+      animation: fadeUp 1s 0.3s ease both;
+      text-shadow: 1px 2px 0 rgba(184,133,28,0.2);
+    }
+
+    .cover-subtitle {
+      font-size: clamp(1rem, 2.5vw, 1.4rem);
+      color: var(--red);
+      font-weight: 300;
+      font-style: italic;
+      margin-bottom: 28px;
+      animation: fadeUp 1s 0.4s ease both;
+    }
+
+    .cover-dedication {
+      font-size: 1rem;
+      color: var(--ink-light);
+      max-width: 380px;
+      line-height: 2;
+      font-weight: 300;
+      animation: fadeUp 1s 0.5s ease both;
+    }
+
+    .scroll-hint {
+      position: absolute;
+      bottom: 36px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      font-family: 'Heebo', sans-serif;
+      font-size: 0.8rem;
+      color: var(--ink-light);
+      opacity: 0.6;
+      animation: bobble 2.5s ease-in-out infinite;
+      letter-spacing: 1px;
+    }
+    .scroll-hint::after {
+      content: '↓';
+      font-size: 1.1rem;
+    }
+
+    @keyframes bobble {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(7px); }
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(22px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ══════════════════════════════════════
+       SHARED SECTION STYLES
+    ══════════════════════════════════════ */
+    .section-wrap {
+      max-width: 1140px;
+      margin: 0 auto;
+      padding: 80px 24px;
+    }
+
+    .section-head {
+      text-align: center;
+      margin-bottom: 56px;
+    }
+
+    .section-label {
+      font-family: 'Heebo', sans-serif;
+      font-size: 0.75rem;
+      letter-spacing: 4px;
+      color: var(--red);
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      display: block;
+    }
+
+    .section-title {
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 16px;
+      line-height: 1.2;
+    }
+
+    .section-divider {
+      color: var(--gold);
+      font-size: 1.1rem;
+      letter-spacing: 10px;
+      opacity: 0.7;
+    }
+
+    /* ══════════════════════════════════════
+       RECIPE CARDS
+    ══════════════════════════════════════ */
+    #recipes {
+      background-color: var(--parchment);
+      background-image:
+        radial-gradient(ellipse at 90% 10%, rgba(184,133,28,0.1) 0%, transparent 40%),
+        repeating-linear-gradient(transparent, transparent 27px, rgba(34,20,9,0.04) 27px, rgba(34,20,9,0.04) 28px);
+      border-top: 1px solid var(--parchment-dark);
+      border-bottom: 1px solid var(--parchment-dark);
+    }
+
+    .recipes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 36px;
+    }
+
+    .recipe-card {
+      background: var(--parchment);
+      border: 1px solid #d8c49a;
+      cursor: pointer;
+      position: relative;
+      transition: transform 0.25s cubic-bezier(.2,.8,.4,1), box-shadow 0.25s ease;
+      box-shadow:
+        3px 3px 0 #c8b080,
+        6px 6px 0 rgba(0,0,0,0.05),
+        12px 14px 32px rgba(34,20,9,0.14);
+      /* Lined paper on the card body */
+    }
+
+    .recipe-card:hover {
+      transform: translate(-4px, -5px) rotate(-0.5deg);
+      box-shadow:
+        7px 7px 0 #c8b080,
+        12px 12px 0 rgba(0,0,0,0.06),
+        20px 24px 50px rgba(34,20,9,0.2);
+    }
+
+    /* Notebook hole punch on the right (RTL spine side) */
+    .recipe-card::before {
+      content: '';
+      position: absolute;
+      top: 18px;
+      right: -8px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--parchment-mid);
+      border: 1px solid #d8c49a;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.15);
+      z-index: 2;
+    }
+    .recipe-card::after {
+      content: '';
+      position: absolute;
+      bottom: 18px;
+      right: -8px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--parchment-mid);
+      border: 1px solid #d8c49a;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.15);
+      z-index: 2;
+    }
+
+    .card-img {
+      width: 100%;
+      height: 210px;
+      object-fit: cover;
+      display: block;
+      filter: sepia(20%) contrast(1.05) brightness(0.97);
+    }
+
+    .card-img-placeholder {
+      width: 100%;
+      height: 210px;
+      background: linear-gradient(135deg, var(--parchment-mid), var(--parchment-dark));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3.5rem;
+    }
+
+    .card-body {
+      padding: 22px 26px 28px;
+      background-image: repeating-linear-gradient(
+        transparent, transparent 23px,
+        rgba(34,20,9,0.055) 23px, rgba(34,20,9,0.055) 24px
+      );
+      position: relative;
+    }
+
+    .card-body::before {
+      content: '';
+      position: absolute;
+      top: 0; right: 26px; left: 26px;
+      height: 1px;
+      background: repeating-linear-gradient(90deg, #d8c49a 0, #d8c49a 5px, transparent 5px, transparent 10px);
+    }
+
+    .card-category {
+      font-family: 'Heebo', sans-serif;
+      font-size: 0.75rem;
+      color: var(--red);
+      letter-spacing: 2px;
+      margin-bottom: 6px;
+    }
+
+    .card-name {
+      font-size: 1.55rem;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 12px;
+      line-height: 1.3;
+    }
+
+    .card-ingredients-preview {
+      font-size: 0.9rem;
+      color: var(--ink-light);
+      line-height: 1.7;
+      font-weight: 300;
+    }
+
+    .card-page-num {
+      position: absolute;
+      bottom: 14px;
+      left: 20px;
+      font-family: 'Heebo', sans-serif;
+      font-size: 0.78rem;
+      color: var(--ink-light);
+      opacity: 0.5;
+    }
+
+    /* ══════════════════════════════════════
+       RECIPE MODAL
+    ══════════════════════════════════════ */
+    #modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(16,8,4,0.82);
+      z-index: 500;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      backdrop-filter: blur(5px);
+    }
+    #modal-overlay.open { display: flex; }
+
+    #modal {
+      background: var(--parchment);
+      background-image: repeating-linear-gradient(
+        transparent, transparent 27px,
+        rgba(34,20,9,0.06) 27px, rgba(34,20,9,0.06) 28px
+      );
+      max-width: 680px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      position: relative;
+      box-shadow: 0 40px 100px rgba(0,0,0,0.6), 0 0 0 1px rgba(184,133,28,0.3);
+      animation: modalIn 0.3s cubic-bezier(.2,.8,.4,1) both;
+    }
+
+    @keyframes modalIn {
+      from { opacity: 0; transform: scale(0.93) translateY(20px); }
+      to   { opacity: 1; transform: scale(1)    translateY(0); }
+    }
+
+    /* Binding strip on the right */
+    .modal-binding {
+      position: absolute;
+      top: 0; right: 0; bottom: 0;
+      width: 36px;
+      background: var(--gold);
+      background-image: radial-gradient(circle at center, var(--parchment) 7px, transparent 7px);
+      background-size: 36px 48px;
+      background-repeat: repeat-y;
+      background-position: center top 24px;
+      flex-shrink: 0;
+    }
+
+    #modal-close {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      width: 34px;
+      height: 34px;
+      background: none;
+      border: 1px solid var(--ink-light);
+      cursor: pointer;
+      font-size: 1rem;
+      color: var(--ink);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Heebo', sans-serif;
+      transition: background 0.2s, color 0.2s;
+      z-index: 10;
+    }
+    #modal-close:hover { background: var(--ink); color: var(--parchment); }
+
+    #modal-body {
+      padding: 40px 50px 44px;
+      padding-right: 70px; /* extra space for binding */
+    }
+
+    .modal-img {
+      width: calc(100% + 20px);
+      margin-right: -20px;
+      max-height: 260px;
+      object-fit: cover;
+      margin-bottom: 30px;
+      filter: sepia(15%) contrast(1.05);
+      display: block;
+    }
+
+    .modal-category {
+      font-family: 'Heebo', sans-serif;
+      font-size: 0.78rem;
+      letter-spacing: 3px;
+      color: var(--red);
+      margin-bottom: 8px;
+    }
+
+    .modal-title {
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 900;
+      color: var(--ink);
+      line-height: 1.15;
+      margin-bottom: 6px;
+    }
+
+    .modal-yield {
+      font-style: italic;
+      color: var(--ink-light);
+      font-size: 0.95rem;
+      margin-bottom: 30px;
+    }
+
+    .modal-section-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--red);
+      margin-bottom: 14px;
+      margin-top: 28px;
+      padding-bottom: 7px;
+      border-bottom: 1px dashed #d0b888;
+    }
+
+    .ingredient-list {
+      list-style: none;
+      margin-bottom: 8px;
+    }
+    .ingredient-list li {
+      padding: 9px 0;
+      border-bottom: 1px dotted #d8c49a;
+      font-size: 1.02rem;
+      color: var(--ink-mid);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      line-height: 1.5;
+    }
+    .ingredient-list li::before {
+      content: '◆';
+      color: var(--gold);
+      font-size: 0.55rem;
+      flex-shrink: 0;
+    }
+
+    .step-list {
+      list-style: none;
+      counter-reset: step;
+      margin-bottom: 8px;
+    }
+    .step-list li {
+      counter-increment: step;
+      padding: 12px 0;
+      border-bottom: 1px dotted #d8c49a;
+      font-size: 1.02rem;
+      color: var(--ink-mid);
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      line-height: 1.7;
+    }
+    .step-list li::before {
+      content: counter(step);
+      background: var(--red);
+      color: white;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      font-family: 'Heebo', sans-serif;
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .modal-notes {
+      background: rgba(184,133,28,0.1);
+      border-right: 3px solid var(--gold);
+      padding: 14px 18px;
+      font-style: italic;
+      color: var(--ink-light);
+      font-size: 0.95rem;
+      line-height: 1.8;
+      margin-top: 28px;
+    }
+
+    /* ══════════════════════════════════════
+       INSTRUCTION PHOTOS (KITCHEN)
+    ══════════════════════════════════════ */
+    #kitchen {
+      background-color: var(--parchment-mid);
+      background-image:
+        radial-gradient(ellipse at 10% 80%, rgba(139,26,26,0.07) 0%, transparent 40%),
+        repeating-linear-gradient(transparent, transparent 27px, rgba(34,20,9,0.04) 27px, rgba(34,20,9,0.04) 28px);
+    }
+
+    .kitchen-intro {
+      text-align: center;
+      font-style: italic;
+      color: var(--ink-light);
+      max-width: 520px;
+      margin: 0 auto 44px;
+      line-height: 2;
+      font-size: 1.05rem;
+    }
+
+    .kitchen-grid {
+      columns: 4 220px;
+      gap: 20px;
+    }
+
+    .kitchen-photo {
+      break-inside: avoid;
+      margin-bottom: 20px;
+      position: relative;
+      background: white;
+      padding: 8px 8px 32px;
+      box-shadow: 2px 3px 0 #c8b080, 6px 8px 20px rgba(34,20,9,0.18);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+      cursor: default;
+    }
+    .kitchen-photo:nth-child(odd)  { transform: rotate(-1deg); }
+    .kitchen-photo:nth-child(even) { transform: rotate(1.2deg); }
+    .kitchen-photo:nth-child(3n)   { transform: rotate(-2deg); }
+    .kitchen-photo:nth-child(4n)   { transform: rotate(0.5deg); }
+    .kitchen-photo:hover {
+      transform: rotate(0deg) scale(1.06) !important;
+      box-shadow: 0 20px 50px rgba(34,20,9,0.28);
+      z-index: 10;
+      position: relative;
+    }
+    .kitchen-photo img {
+      width: 100%;
+      display: block;
+      filter: sepia(20%) contrast(1.05);
+    }
+
+    /* ══════════════════════════════════════
+       PERSONAL MEMORIES
+    ══════════════════════════════════════ */
+    #memories {
+      background-color: var(--parchment-dark);
+      background-image:
+        radial-gradient(ellipse at 80% 20%, rgba(184,133,28,0.15) 0%, transparent 40%),
+        repeating-linear-gradient(transparent, transparent 27px, rgba(34,20,9,0.05) 27px, rgba(34,20,9,0.05) 28px);
+      border-top: 1px solid #d0b888;
+    }
+
+    .memories-intro {
+      text-align: center;
+      font-style: italic;
+      color: var(--ink-light);
+      max-width: 500px;
+      margin: 0 auto 44px;
+      line-height: 2;
+      font-size: 1.05rem;
+    }
+
+    .memories-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 32px;
+    }
+
+    .memory-frame {
+      background: white;
+      padding: 10px 10px 44px;
+      box-shadow: 2px 3px 0 #c8b080, 6px 8px 24px rgba(34,20,9,0.22);
+      width: 180px;
+      flex-shrink: 0;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: default;
+    }
+    .memory-frame:nth-child(1) { transform: rotate(-3deg); }
+    .memory-frame:nth-child(2) { transform: rotate(2deg); }
+    .memory-frame:nth-child(3) { transform: rotate(-1deg); }
+    .memory-frame:nth-child(4) { transform: rotate(3.5deg); }
+    .memory-frame:nth-child(5) { transform: rotate(-2.5deg); }
+    .memory-frame:hover {
+      transform: rotate(0) scale(1.08) !important;
+      box-shadow: 0 24px 60px rgba(34,20,9,0.3);
+      z-index: 10;
+      position: relative;
+    }
+    .memory-frame img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      filter: sepia(25%) contrast(1.05) brightness(0.97);
+      display: block;
+    }
+
+    /* ══════════════════════════════════════
+       FOOTER
+    ══════════════════════════════════════ */
+    footer {
+      text-align: center;
+      padding: 60px 24px 50px;
+      background-color: var(--ink);
+      background-image: radial-gradient(ellipse at 50% 50%, rgba(184,133,28,0.15) 0%, transparent 60%);
+      color: var(--parchment-mid);
+    }
+
+    .footer-ornament {
+      color: var(--gold-light);
+      font-size: 1.2rem;
+      letter-spacing: 12px;
+      margin: 18px 0;
+      opacity: 0.8;
+    }
+
+    footer p {
+      font-size: 1.05rem;
+      line-height: 2.2;
+      color: rgba(253,248,237,0.75);
+      font-weight: 300;
+    }
+
+    footer .footer-name {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--parchment);
+      margin-bottom: 4px;
+    }
+
+    /* ══════════════════════════════════════
+       RESPONSIVE
+    ══════════════════════════════════════ */
+    @media (max-width: 640px) {
+      .recipes-grid { grid-template-columns: 1fr; }
+      #modal-body { padding: 32px 24px 36px; padding-right: 56px; }
+      .modal-title { font-size: 1.7rem; }
+      .memory-frame { width: 140px; }
+      .kitchen-grid { columns: 2 160px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ══════ COVER ══════ -->
+  <section id="cover">
+    <div class="cover-border"></div>
+
+    <div class="cover-photo-wrap">
+      <img src="Photos/IMG_2576.JPG" alt="סבתא" class="cover-photo"
+           onerror="this.style.display='none'">
+    </div>
+
+    <div class="cover-ornament">✦ &nbsp; ✦ &nbsp; ✦</div>
+    <h1 class="cover-title">מתכוני סבתא</h1>
+    <p class="cover-subtitle">זכרונות על קדרה ועל אהבה</p>
+    <p class="cover-dedication">
+      אוסף מתכונים מסורתיים<br>
+      כפי שנכתבו בכתב ידה האהוב<br>
+      לדורות הבאים
+    </p>
+
+    <div class="scroll-hint">גלגל למטה</div>
+  </section>
+
+  <!-- ══════ RECIPES ══════ -->
+  <section id="recipes">
+    <div class="section-wrap">
+      <div class="section-head">
+        <span class="section-label">מהמטבח שלה</span>
+        <h2 class="section-title">המתכונים</h2>
+        <div class="section-divider">✦ &nbsp; ✦ &nbsp; ✦</div>
+      </div>
+      <div class="recipes-grid" id="recipes-grid"></div>
+    </div>
+  </section>
+
+  <!-- SVG divider -->
+  <div style="text-align:center; line-height:0; background: var(--parchment-mid);">
+    <svg width="100%" height="28" viewBox="0 0 800 28" preserveAspectRatio="none">
+      <line x1="0" y1="14" x2="340" y2="14" stroke="#b8851c" stroke-width="1" stroke-dasharray="5,5" opacity="0.4"/>
+      <text x="400" y="18" text-anchor="middle" fill="#b8851c" font-size="16" opacity="0.6">✦</text>
+      <line x1="460" y1="14" x2="800" y2="14" stroke="#b8851c" stroke-width="1" stroke-dasharray="5,5" opacity="0.4"/>
+    </svg>
+  </div>
+
+  <!-- ══════ KITCHEN MOMENTS ══════ -->
+  <section id="kitchen">
+    <div class="section-wrap">
+      <div class="section-head">
+        <span class="section-label">מאחורי הקלעים</span>
+        <h2 class="section-title">ברגעי ההכנה</h2>
+        <div class="section-divider">✦ &nbsp; ✦ &nbsp; ✦</div>
+      </div>
+      <p class="kitchen-intro">
+        הידיים שלה ידעו בדיוק מה לעשות.<br>
+        ריח הבישול, קולות הסיר, החום שעלה מהמטבח –<br>
+        כאן שמורים הרגעים.
+      </p>
+      <div class="kitchen-grid" id="kitchen-grid"></div>
+    </div>
+  </section>
+
+  <!-- ══════ MEMORIES ══════ -->
+  <section id="memories">
+    <div class="section-wrap">
+      <div class="section-head">
+        <span class="section-label">תמונות משפחה</span>
+        <h2 class="section-title">הזכרונות שלנו</h2>
+        <div class="section-divider">✦ &nbsp; ✦ &nbsp; ✦</div>
+      </div>
+      <p class="memories-intro">
+        חיוכים שממשיכים לחמם את הלב.<br>
+        נשמרת ונזכרת, אהובה לנצח.
+      </p>
+      <div class="memories-grid" id="memories-grid"></div>
+    </div>
+  </section>
+
+  <!-- ══════ FOOTER ══════ -->
+  <footer>
+    <div class="footer-ornament">✦ &nbsp; ✦ &nbsp; ✦</div>
+    <p class="footer-name">לזכרה של סבתא האהובה</p>
+    <p>שתהא נשמתה צרורה בצרור החיים</p>
+    <div class="footer-ornament">✦ &nbsp; ✦ &nbsp; ✦</div>
+    <p style="font-size:0.78rem; opacity:0.4; margin-top:10px;">
+      מתכונים מסורתיים · נכתבו בידי אהבה
+    </p>
+  </footer>
+
+  <!-- ══════ MODAL ══════ -->
+  <div id="modal-overlay" onclick="if(event.target===this) closeModal()">
+    <div id="modal">
+      <div class="modal-binding"></div>
+      <button id="modal-close" onclick="closeModal()" title="סגור">✕</button>
+      <div id="modal-body"></div>
+    </div>
+  </div>
+
+  <script>
+    /* ─── DATA ─── */
+    const RECIPES = [
+      {
+        id: 1,
+        name: "כדורי בשר",
+        category: "בשר",
+        yield: "כ-8 כדורים",
+        ingredients: ["בשר טחון", "תערובת תבלינים", "שמן לטיגון"],
+        instructions: [
+          "מכינים את תערובת הבשר עם כל המרכיבים",
+          "מגלגלים לכדורים",
+          "מכניסים לתבנית עגולה",
+          "אופים עד שמוכן"
+        ],
+        notes: "ניתן לבשל בסיר או בתבנית",
+        foodPhoto: "Photos/אוכל/IMG_2577.JPG"
+      },
+      {
+        id: 2,
+        name: "קובה אדומה מרק",
+        category: "שוונדר",
+        yield: "",
+        ingredients: ["4–5 סלק", "לימון ומלח", "סוכר – 1.5 כפות"],
+        instructions: [
+          "מבשלים את הסלק",
+          "לבשל שלמים עד שרך, לקלף ולחתוך לפלחים (לשטוף טוב לפני)",
+          "לטגן בצל ולשים את מי הסלק ואת הפלחים – סלק אחד מגרדים",
+          "לתבל לפי טעם",
+          "מבשלים יחד עד שמוכן"
+        ],
+        notes: "קובה סלק שונדר – מרק",
+        foodPhoto: "Photos/אוכל/904735087.webp"
+      },
+      {
+        id: 3,
+        name: "הכנת קובות (הטנאים)",
+        category: "קובה",
+        yield: "",
+        ingredients: ["סולא", "קובות"],
+        instructions: [
+          "חשוב להכין מראש",
+          "מניחים בחוץ להתייבש",
+          "לאחר שמוכן – מכניסים לסיר",
+          "מבשלים עם כל המרכיבים",
+          "שקינה מסול ומארחות"
+        ],
+        notes: "הכנת הטנאים – שלב חשוב לפני הבישול",
+        foodPhoto: "Photos/אוכל/IMG_2587.JPG"
+      },
+      {
+        id: 4,
+        name: "דרך הכנה – חמוש מאחר",
+        category: "ירקות",
+        yield: "",
+        ingredients: [
+          "מאיה (ביצה?)", "שמן – 50 כמות", "רכה / סיקנייד",
+          "שום (1–50)", "לימון", "כמון", "סוכר"
+        ],
+        instructions: [
+          "מחממים שמן בסיר",
+          "מוסיפים את כל המרכיבים",
+          "מוסיפים כף מלושה + 3 כמות",
+          "מוסיפים מגוקה לבסבקה",
+          "מרימים מ-מאיה ומוסיפים שום",
+          "מוסיפים נקמה מהקוסות",
+          "לסיום: לימון + כמון וסוכר"
+        ],
+        notes: "דרך מסורתית להכנה",
+        foodPhoto: "Photos/אוכל/IMG_2593.JPG"
+      },
+      {
+        id: 5,
+        name: "בשר לבותון (כדורים)",
+        category: "בשר",
+        yield: "",
+        ingredients: ["בשר טחון", "קמח", "קורנון", "סולי", "קאמה (כמון?)"],
+        instructions: [
+          "מכינים את הבשר עם כל המרכיבים",
+          "מרוצים על הקובר",
+          "מוסיפים סולי + קורנון + קמח + קאמה",
+          "מגלגלים לכדורים",
+          "מבשלים בסיר"
+        ],
+        notes: "עם ציור של כדורים בסיר – מרכזים את הכדורים",
+        foodPhoto: "Photos/אוכל/f94dc35790457e6482ce77032d0c20dd.jpg"
+      },
+      {
+        id: 6,
+        name: "קובה תילושה (קולאים מאורב)",
+        category: "קובה",
+        yield: "",
+        ingredients: ["כוס ו-¾ קמח / סולת", "שמן", "חומוס מבושל", "קישואים", "תבלינים"],
+        instructions: [
+          "לשים את הבצק – כוס ו-¾ עם שמן ותוספות",
+          "מחממים שמן במחבת עמוק",
+          "מוסיפים קישואים מבושלים",
+          "מרכיבים את הקובה – שרלמין",
+          "מוסיפים חומוס",
+          "מבשלים עד שמוכן"
+        ],
+        notes: "קובה תילושה מסורתית",
+        foodPhoto: "Photos/אוכל/hq720.jpg"
+      }
+    ];
+
+    const KITCHEN_PHOTOS = [
+      "Photos/הכנה/IMG_2572.JPG", "Photos/הכנה/IMG_2573.JPG",
+      "Photos/הכנה/IMG_2574.JPG", "Photos/הכנה/IMG_2579.JPG",
+      "Photos/הכנה/IMG_2580.JPG", "Photos/הכנה/IMG_2581.JPG",
+      "Photos/הכנה/IMG_2582.JPG", "Photos/הכנה/IMG_2583.JPG",
+      "Photos/הכנה/IMG_2584.JPG", "Photos/הכנה/IMG_2585.JPG",
+      "Photos/הכנה/IMG_2586.JPG", "Photos/הכנה/IMG_2591.JPG",
+      "Photos/הכנה/IMG_2592.JPG"
+    ];
+
+    const PERSONAL_PHOTOS = [
+      "Photos/אישי/IMG_2575.JPG",
+      "Photos/אישי/IMG_2578.JPG",
+      "Photos/אישי/IMG_2588(1).jpg",
+      "Photos/אישי/IMG_2588.JPG",
+      "Photos/אישי/IMG_2589.JPG"
+    ];
+
+    /* ─── RENDER RECIPES ─── */
+    const recipeGrid = document.getElementById('recipes-grid');
+    RECIPES.forEach(r => {
+      const card = document.createElement('div');
+      card.className = 'recipe-card';
+      card.onclick = () => openModal(r);
+      card.innerHTML = `
+        <img src="${r.foodPhoto}" alt="${r.name}" class="card-img"
+             onerror="this.outerHTML='<div class=\\'card-img-placeholder\\'>🥘</div>'">
+        <div class="card-body">
+          <div class="card-category">${r.category}</div>
+          <h3 class="card-name">${r.name}</h3>
+          <p class="card-ingredients-preview">${r.ingredients.slice(0, 3).join(' · ')}</p>
+          <span class="card-page-num">עמוד ${r.id}</span>
+        </div>`;
+      recipeGrid.appendChild(card);
+    });
+
+    /* ─── RENDER KITCHEN PHOTOS ─── */
+    const kitchenGrid = document.getElementById('kitchen-grid');
+    KITCHEN_PHOTOS.forEach((src, i) => {
+      const el = document.createElement('div');
+      el.className = 'kitchen-photo';
+      el.innerHTML = `<img src="${src}" alt="שלב הכנה ${i + 1}"
+        onerror="this.closest('.kitchen-photo').style.display='none'">`;
+      kitchenGrid.appendChild(el);
+    });
+
+    /* ─── RENDER PERSONAL PHOTOS ─── */
+    const memoriesGrid = document.getElementById('memories-grid');
+    PERSONAL_PHOTOS.forEach((src, i) => {
+      const el = document.createElement('div');
+      el.className = 'memory-frame';
+      el.innerHTML = `<img src="${src}" alt="זכרון ${i + 1}"
+        onerror="this.closest('.memory-frame').style.display='none'">`;
+      memoriesGrid.appendChild(el);
+    });
+
+    /* ─── MODAL ─── */
+    function openModal(recipe) {
+      const overlay = document.getElementById('modal-overlay');
+      const body    = document.getElementById('modal-body');
+
+      const ingredients = recipe.ingredients.map(i =>
+        `<li>${i}</li>`).join('');
+      const steps = recipe.instructions.map(s =>
+        `<li>${s}</li>`).join('');
+
+      body.innerHTML = `
+        <img src="${recipe.foodPhoto}" alt="${recipe.name}" class="modal-img"
+             onerror="this.style.display='none'">
+        <div class="modal-category">${recipe.category}</div>
+        <h2 class="modal-title">${recipe.name}</h2>
+        ${recipe.yield ? `<p class="modal-yield">כמות: ${recipe.yield}</p>` : ''}
+
+        <h3 class="modal-section-title">מרכיבים</h3>
+        <ul class="ingredient-list">${ingredients}</ul>
+
+        <h3 class="modal-section-title">הוראות הכנה</h3>
+        <ol class="step-list">${steps}</ol>
+
+        ${recipe.notes ? `<div class="modal-notes">📝 ${recipe.notes}</div>` : ''}
+      `;
+
+      // Reset scroll
+      document.getElementById('modal').scrollTop = 0;
+
+      overlay.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+      document.getElementById('modal-overlay').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') closeModal();
+    });
+  </script>
+</body>
+</html>
