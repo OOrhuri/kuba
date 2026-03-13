@@ -687,23 +687,52 @@
       'Photos/אישי/IMG_2589.JPG',
     ];
 
-    /* ── Fetch recipes.json ── */
+    /* ── Inline fallback data (works when opened as a local file) ── */
+    const FALLBACK = {
+      meta: { title: "המתכונים שך סבתא רחל" },
+      recipes: [
+        { id:1, page:1, name:"כדורי בשר", category:"בשר", yield:"כ-8 כדורים",
+          ingredients:["בשר טחון","תערובת תבלינים","שמן לטיגון"],
+          instructions:["מכינים את תערובת הבשר עם כל המרכיבים","מגלגלים לכדורים","מכניסים לתבנית עגולה","אופים עד שמוכן"],
+          notes:"ניתן לבשל בסיר או בתבנית" },
+        { id:2, page:2, name:"קובה אדומה מרק", category:"שוונדר", yield:"",
+          ingredients:["4-5 סלק","לימון ומלח","סוכר - 1.5 כפות"],
+          instructions:["מבשלים את הסלק","לבשל שלמים עד שרך לקלף ולחתוך לפלחים","לטגן בצל ולשים את המים של הסלק ואת הפלחים","לתבל לפי טעם","מבשלים יחד עד שמוכן"],
+          notes:"קובה סלק שונדר – מרק" },
+        { id:3, page:3, name:"הכנת קובות (הטנאים)", category:"קובה", yield:"",
+          ingredients:["סולא","קובות"],
+          instructions:["חשוב להכין מראש","מניחים בחוץ להתייבש","לאחר שמוכן – מכניסים לסיר","מבשלים עם כל המרכיבים","שקינה מסול ומארחות"],
+          notes:"הכנת הטנאים – שלב חשוב לפני הבישול" },
+        { id:4, page:4, name:"דרך הכנה – חמוש מאחר", category:"ירקות", yield:"",
+          ingredients:["מאיה (ביצה?)","שמן – 50 כמות","רכה / סיקנייד","שום (1-50)","לימון","כמון","סוכר"],
+          instructions:["מחממים שמן בסיר","מוסיפים את כל המרכיבים","מוסיפים כף מלושה + 3 כמות","מוסיפים מגוקה לבסבקה","מרימים מ-מאיה ומוסיפים שום","מוסיפים נקמה מהקוסות","לסיום: לימון + כמון וסוכר"],
+          notes:"דרך מסורתית להכנה" },
+        { id:5, page:5, name:"בשר לבותון (כדורים)", category:"בשר", yield:"",
+          ingredients:["בשר טחון","קמח","קורנון","סולי","קאמה (כמון?)"],
+          instructions:["מכינים בשר עם כל המרכיבים","מרוצים על הקובר","מוסיפים סולי + קורנון + קמח + קאמה","מגלגלים לכדורים","מבשלים בסיר"],
+          notes:"עם ציור של כדורים בסיר – מרכזים את הכדורים" },
+        { id:6, page:6, name:"קובה תילושה (קולאים מאורב)", category:"קובה", yield:"",
+          ingredients:["כוס ו-¾ קמח / סולת","שמן","חומוס מבושל","קישואים","תבלינים"],
+          instructions:["לשים את הבצק – כוס ו-¾ עם שמן ותוספות","מחממים שמן במחבת עמוק","מוסיפים קישואים מבושלים","מרכיבים את הקובה – שרלמין","מוסיפים חומוס","מבשלים עד שמוכן"],
+          notes:"קובה תילושה מסורתית" }
+      ]
+    };
+
+    function applyData(data) {
+      if (data.meta?.title) {
+        document.title = data.meta.title;
+        document.getElementById('cover-title').textContent = data.meta.title;
+        const nameOnly = data.meta.title.replace('מתכוני ', '');
+        document.getElementById('footer-name').textContent = 'לזכרה של ' + nameOnly;
+      }
+      renderRecipes(data.recipes || []);
+    }
+
+    /* ── Try fetch (works on server/GitHub Pages), fall back to inline data ── */
     fetch('recipes.json')
       .then(r => r.ok ? r.json() : Promise.reject())
-      .then(data => {
-        if (data.meta?.title) {
-          document.title = data.meta.title;
-          document.getElementById('cover-title').textContent = data.meta.title;
-          const nameOnly = data.meta.title.replace('מתכוני ', '');
-          document.getElementById('footer-name').textContent = 'לזכרה של ' + nameOnly;
-        }
-        renderRecipes(data.recipes || []);
-      })
-      .catch(() => {
-        document.getElementById('recipes-grid').innerHTML =
-          '<p style="grid-column:1/-1;text-align:center;color:var(--text-soft);padding:40px 0;">' +
-          'פתח את האתר דרך GitHub Pages כדי לטעון את המתכונים.</p>';
-      });
+      .then(data => applyData(data))
+      .catch(() => applyData(FALLBACK));
 
     /* ── Render recipe cards ── */
     function renderRecipes(recipes) {
