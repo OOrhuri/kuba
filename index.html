@@ -853,9 +853,82 @@
       display: flex; align-items: center; justify-content: center;
       transition: all 0.2s;
       z-index: 500;
-      opacity: 0.4;
+      opacity: 0.15;
     }
-    #admin-toggle:hover { opacity: 1; background: var(--rose-pale); color: var(--rose); }
+    #admin-toggle:hover { opacity: 0.7; background: var(--rose-pale); color: var(--rose); }
+
+    /* ── Password gate ── */
+    #pw-overlay {
+      position: fixed; inset: 0;
+      z-index: 900;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(46,30,24,0.45);
+      backdrop-filter: blur(6px);
+    }
+    #pw-overlay.open { display: flex; }
+
+    #pw-box {
+      background: var(--white);
+      border-radius: 24px;
+      padding: 36px 32px 28px;
+      width: 320px;
+      box-shadow: 0 24px 64px rgba(46,30,24,0.2);
+      text-align: center;
+      animation: fadeUp 0.3s ease both;
+    }
+    #pw-box .pw-icon { font-size: 2rem; margin-bottom: 12px; }
+    #pw-box h3 { font-size: 1.1rem; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+    #pw-box p  { font-size: 0.82rem; color: var(--text-soft); margin-bottom: 20px; line-height: 1.5; }
+    #pw-input {
+      width: 100%;
+      text-align: center;
+      letter-spacing: 4px;
+      font-size: 1.2rem;
+      padding: 11px 14px;
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      font-family: 'Heebo', sans-serif;
+      color: var(--text);
+      background: var(--bg);
+      margin-bottom: 14px;
+      transition: border-color 0.2s;
+    }
+    #pw-input:focus { outline: none; border-color: var(--rose); }
+    #pw-input.shake {
+      animation: shake 0.4s ease;
+      border-color: #c0392b;
+    }
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      20%      { transform: translateX(-8px); }
+      40%      { transform: translateX(8px); }
+      60%      { transform: translateX(-6px); }
+      80%      { transform: translateX(6px); }
+    }
+    #pw-submit {
+      width: 100%;
+      padding: 11px;
+      background: var(--rose);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-family: 'Heebo', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    #pw-submit:hover { background: #d98880; }
+    #pw-error { font-size: 0.8rem; color: #c0392b; margin-top: 10px; min-height: 18px; }
+    #pw-cancel {
+      margin-top: 12px;
+      background: none; border: none; cursor: pointer;
+      font-size: 0.8rem; color: var(--text-soft);
+      font-family: 'Heebo', sans-serif;
+    }
+    #pw-cancel:hover { color: var(--text-mid); }
 
     #admin-overlay {
       position: fixed; inset: 0;
@@ -1033,6 +1106,19 @@
 
   <button id="admin-toggle" title="עריכה">✏️</button>
 
+  <!-- ── Password gate ── -->
+  <div id="pw-overlay">
+    <div id="pw-box">
+      <div class="pw-icon" id="pw-icon">🔒</div>
+      <h3 id="pw-title">כניסה לעורך</h3>
+      <p id="pw-desc">הכנס סיסמה כדי לערוך את האתר</p>
+      <input type="password" id="pw-input" placeholder="••••••" autocomplete="current-password">
+      <button id="pw-submit">כניסה</button>
+      <div id="pw-error"></div>
+      <button id="pw-cancel" onclick="closePwGate()">ביטול</button>
+    </div>
+  </div>
+
   <div id="admin-overlay">
     <div id="admin-backdrop" onclick="closeAdmin()"></div>
     <div id="admin-panel">
@@ -1081,8 +1167,73 @@
   <script>
     /* ── Admin state ── */
     let adminData = null;
+    const PW_HASH_KEY = 'admin_pw_hash';
 
-    document.getElementById('admin-toggle').addEventListener('click', openAdmin);
+    /* ── Password gate ── */
+    document.getElementById('admin-toggle').addEventListener('click', () => {
+      if (sessionStorage.getItem('admin_auth') === '1') {
+        openAdmin();
+      } else {
+        openPwGate();
+      }
+    });
+
+    function openPwGate() {
+      const hasHash = !!localStorage.getItem(PW_HASH_KEY);
+      document.getElementById('pw-icon').textContent  = hasHash ? '🔒' : '🔑';
+      document.getElementById('pw-title').textContent = hasHash ? 'כניסה לעורך' : 'הגדר סיסמה';
+      document.getElementById('pw-desc').textContent  = hasHash
+        ? 'הכנס סיסמה כדי לערוך את האתר'
+        : 'בחר סיסמה – תשמש אותך בכל כניסה לעורך';
+      document.getElementById('pw-submit').textContent = hasHash ? 'כניסה' : 'שמור סיסמה';
+      document.getElementById('pw-error').textContent = '';
+      document.getElementById('pw-input').value = '';
+      document.getElementById('pw-overlay').classList.add('open');
+      setTimeout(() => document.getElementById('pw-input').focus(), 80);
+    }
+
+    function closePwGate() {
+      document.getElementById('pw-overlay').classList.remove('open');
+      document.getElementById('pw-input').value = '';
+      document.getElementById('pw-error').textContent = '';
+    }
+
+    async function sha256(str) {
+      const buf = await crypto.subtle.digest('SHA-256',
+        new TextEncoder().encode(str));
+      return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+    }
+
+    document.getElementById('pw-submit').addEventListener('click', handlePwSubmit);
+    document.getElementById('pw-input').addEventListener('keydown', e => {
+      if (e.key === 'Enter') handlePwSubmit();
+    });
+
+    async function handlePwSubmit() {
+      const val = document.getElementById('pw-input').value;
+      if (!val) return;
+      const input = document.getElementById('pw-input');
+      const errorEl = document.getElementById('pw-error');
+      const stored = localStorage.getItem(PW_HASH_KEY);
+      const hash = await sha256(val);
+
+      if (!stored) {
+        /* First time — set password */
+        localStorage.setItem(PW_HASH_KEY, hash);
+        sessionStorage.setItem('admin_auth', '1');
+        closePwGate();
+        openAdmin();
+      } else if (hash === stored) {
+        sessionStorage.setItem('admin_auth', '1');
+        closePwGate();
+        openAdmin();
+      } else {
+        errorEl.textContent = 'סיסמה שגויה';
+        input.classList.add('shake');
+        input.value = '';
+        setTimeout(() => input.classList.remove('shake'), 500);
+      }
+    }
 
     function openAdmin() {
       const token = localStorage.getItem('gh_token') || '';
