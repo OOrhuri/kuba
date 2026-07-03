@@ -1225,7 +1225,27 @@
       </div>
 
       <div id="admin-body">
-        <!-- Token -->
+        <!-- Cover photo — first so it's immediately visible -->
+        <div class="admin-section">
+          <div class="admin-section-title">תמונה ראשית</div>
+          <div class="img-upload-row">
+            <div id="admin-cover-wrap" style="width:80px;height:80px;border-radius:50%;overflow:hidden;border:2px solid var(--border);flex-shrink:0;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:1.8rem;">
+              <img id="admin-cover-preview" style="width:100%;height:100%;object-fit:cover;display:block;"
+                   src="" onerror="this.style.display='none';document.getElementById('admin-cover-wrap').textContent='👤'">
+            </div>
+            <button type="button" class="img-pick-btn" onclick="document.getElementById('file-cover-img').click()">📷 החלף תמונה ראשית</button>
+          </div>
+        </div>
+
+        <!-- Title -->
+        <div class="admin-section">
+          <div class="admin-section-title">כותרת ראשית</div>
+          <div class="admin-field">
+            <input type="text" id="admin-title" class="admin-input" placeholder="שם האתר">
+          </div>
+        </div>
+
+        <!-- Token — below content so it doesn't dominate -->
         <div class="admin-section">
           <div class="admin-section-title">GitHub Token</div>
           <div class="admin-field">
@@ -1236,25 +1256,6 @@
               צור טוקן ב־ GitHub → Settings → Developer settings → Personal access tokens → Fine-grained<br>
               הרשאות נדרשות: <strong>Contents: Read and write</strong>
             </p>
-          </div>
-        </div>
-
-        <!-- Cover photo -->
-        <div class="admin-section">
-          <div class="admin-section-title">תמונה ראשית</div>
-          <div class="img-upload-row">
-            <img id="admin-cover-preview" class="img-thumb" src="Photos/IMG_2576.JPG"
-                 style="width:80px;height:80px;border-radius:50%;"
-                 onerror="this.outerHTML='<div class=\'img-thumb-placeholder\' style=\'width:80px;height:80px;border-radius:50%;\'>👤</div>'">
-            <button type="button" class="img-pick-btn" onclick="document.getElementById('file-cover-img').click()">📷 החלף תמונה ראשית</button>
-          </div>
-        </div>
-
-        <!-- Title -->
-        <div class="admin-section">
-          <div class="admin-section-title">כותרת ראשית</div>
-          <div class="admin-field">
-            <input type="text" id="admin-title" class="admin-input" placeholder="שם האתר">
           </div>
         </div>
 
@@ -1366,7 +1367,13 @@
 
       document.getElementById('admin-title').value = adminData.meta?.title || '';
       const coverPrev = document.getElementById('admin-cover-preview');
-      if (coverPrev) coverPrev.src = adminData.meta?.coverPhoto || 'Photos/IMG_2576.JPG';
+      if (coverPrev) {
+        coverPrev.style.display = 'block';
+        coverPrev.src = adminData.meta?.coverPhoto || 'Photos/IMG_2576.JPG';
+        const wrap = document.getElementById('admin-cover-wrap');
+        if (wrap) wrap.textContent = '';
+        wrap.appendChild(coverPrev);
+      }
       buildRecipeEditor(adminData.recipes || []);
       buildPersonalPhotosEditor(adminData.personalPhotos || PERSONAL_PHOTOS);
 
@@ -1590,9 +1597,6 @@
     }
 
     function collectAdminData() {
-      const token = document.getElementById('admin-token').value.trim();
-      if (token) localStorage.setItem('gh_token', token);
-
       const data = JSON.parse(JSON.stringify(adminData));
       data.meta = data.meta || {};
       data.meta.title      = document.getElementById('admin-title').value.trim();
@@ -1609,13 +1613,16 @@
         r.instructions = card.querySelector('.r-instructions').value.split('\n').map(s=>s.trim()).filter(Boolean);
         r.notes        = card.querySelector('.r-notes').value.trim();
       });
-      return { token, data };
+      return { data };
     }
 
     async function adminSave() {
       const btn    = document.getElementById('admin-save');
       const status = document.getElementById('save-status');
-      const { token, data } = collectAdminData();
+
+      /* Get token first (before collecting data, to validate) */
+      const token = document.getElementById('admin-token').value.trim();
+      if (token) localStorage.setItem('gh_token', token);
 
       if (!token) {
         status.textContent = '⚠️ חסר טוקן';
@@ -1628,8 +1635,11 @@
       status.className = '';
 
       try {
-        /* Upload any pending images first */
+        /* Upload images first — they update adminData with the saved paths */
         if (pendingUploads.length > 0) await uploadPendingImages(token);
+
+        /* Collect data AFTER uploads so foodPhoto/coverPhoto paths are set */
+        const { data } = collectAdminData();
 
         status.textContent = 'שומר…';
 
