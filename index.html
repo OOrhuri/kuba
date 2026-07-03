@@ -689,7 +689,7 @@
 
     /* ── Inline fallback data (works when opened as a local file) ── */
     const FALLBACK = {
-      meta: { title: "המתכונים של סבתא רחל" },
+      meta: { title: "המתכונים של סבתא רחל", coverPhoto: "Photos/IMG_2576.JPG" },
       personalPhotos: [
         'Photos/אישי/IMG_2575.JPG','Photos/אישי/IMG_2578.JPG',
         'Photos/אישי/IMG_2588(1).jpg','Photos/אישי/IMG_2588.JPG',
@@ -729,6 +729,10 @@
         document.getElementById('cover-title').textContent = data.meta.title;
         const nameOnly = data.meta.title.replace('מתכוני ', '');
         document.getElementById('footer-name').textContent = 'לזכרה של ' + nameOnly;
+      }
+      if (data.meta?.coverPhoto) {
+        const img = document.querySelector('.cover-photo');
+        if (img) img.src = data.meta.coverPhoto;
       }
       renderRecipes(data.recipes || []);
       renderPersonalPhotos(data.personalPhotos || PERSONAL_PHOTOS);
@@ -1235,6 +1239,17 @@
           </div>
         </div>
 
+        <!-- Cover photo -->
+        <div class="admin-section">
+          <div class="admin-section-title">תמונה ראשית</div>
+          <div class="img-upload-row">
+            <img id="admin-cover-preview" class="img-thumb" src="Photos/IMG_2576.JPG"
+                 style="width:80px;height:80px;border-radius:50%;"
+                 onerror="this.outerHTML='<div class=\'img-thumb-placeholder\' style=\'width:80px;height:80px;border-radius:50%;\'>👤</div>'">
+            <button type="button" class="img-pick-btn" onclick="document.getElementById('file-cover-img').click()">📷 החלף תמונה ראשית</button>
+          </div>
+        </div>
+
         <!-- Title -->
         <div class="admin-section">
           <div class="admin-section-title">כותרת ראשית</div>
@@ -1258,6 +1273,7 @@
       </div>
 
       <!-- Hidden file inputs -->
+      <input type="file" id="file-cover-img" accept="image/*" style="display:none">
       <input type="file" id="file-recipe-img" accept="image/*" style="display:none">
       <input type="file" id="file-personal-img" accept="image/*" multiple style="display:none">
 
@@ -1349,6 +1365,8 @@
       pendingUploads.length = 0;
 
       document.getElementById('admin-title').value = adminData.meta?.title || '';
+      const coverPrev = document.getElementById('admin-cover-preview');
+      if (coverPrev) coverPrev.src = adminData.meta?.coverPhoto || 'Photos/IMG_2576.JPG';
       buildRecipeEditor(adminData.recipes || []);
       buildPersonalPhotosEditor(adminData.personalPhotos || PERSONAL_PHOTOS);
 
@@ -1424,6 +1442,27 @@
     function toggleRecipeCard(header) {
       header.closest('.recipe-edit-card').classList.toggle('expanded');
     }
+
+    /* ── Cover photo picker ── */
+    document.getElementById('file-cover-img').addEventListener('change', function() {
+      const file = this.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = e => {
+        const base64 = e.target.result.split(',')[1];
+        const ext    = file.name.split('.').pop().toLowerCase();
+        const path   = `Photos/cover.${ext}`;
+
+        const existing = pendingUploads.findIndex(u => u.isCover);
+        if (existing !== -1) pendingUploads.splice(existing, 1);
+        pendingUploads.push({ path, base64, isCover: true });
+
+        /* Live preview in editor */
+        const prev = document.getElementById('admin-cover-preview');
+        if (prev) prev.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
 
     /* ── Personal photos editor ── */
     function buildPersonalPhotosEditor(photos) {
@@ -1541,7 +1580,9 @@
           throw new Error('שגיאה בהעלאת תמונה: ' + (err.message || upload.path));
         }
         /* Update adminData with final path */
-        if (upload.recipeIdx !== undefined) {
+        if (upload.isCover) {
+          adminData.meta.coverPhoto = upload.path;
+        } else if (upload.recipeIdx !== undefined) {
           adminData.recipes[upload.recipeIdx].foodPhoto = upload.path;
         }
       }
@@ -1554,7 +1595,8 @@
 
       const data = JSON.parse(JSON.stringify(adminData));
       data.meta = data.meta || {};
-      data.meta.title = document.getElementById('admin-title').value.trim();
+      data.meta.title      = document.getElementById('admin-title').value.trim();
+      data.meta.coverPhoto = adminData.meta?.coverPhoto || 'Photos/IMG_2576.JPG';
       data.personalPhotos = adminData.personalPhotos || [];
 
       document.querySelectorAll('#admin-recipes-list .recipe-edit-card').forEach((card, idx) => {
