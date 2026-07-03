@@ -356,7 +356,7 @@
 
     .modal-img {
       width: calc(100% + 56px);
-      margin-right: -28px;
+      margin-left: -28px;
       max-height: 240px;
       object-fit: cover;
       display: block;
@@ -563,7 +563,7 @@
     @media (max-width: 600px) {
       .recipes-grid { grid-template-columns: 1fr; }
       #modal-body   { padding: 18px 20px 44px; }
-      .modal-img    { width: calc(100% + 40px); margin-right: -20px; }
+      .modal-img    { width: calc(100% + 40px); margin-left: -20px; }
       .memory-card  { width: 130px; }
       .memory-ring  { width: 130px; height: 130px; }
     }
@@ -689,7 +689,7 @@
 
     /* ── Inline fallback data (works when opened as a local file) ── */
     const FALLBACK = {
-      meta: { title: "המתכונים שך סבתא רחל" },
+      meta: { title: "המתכונים של סבתא רחל" },
       recipes: [
         { id:1, page:1, name:"כדורי בשר", category:"בשר", yield:"כ-8 כדורים",
           ingredients:["בשר טחון","תערובת תבלינים","שמן לטיגון"],
@@ -831,7 +831,423 @@
       document.body.style.overflow = '';
     }
 
-    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') { closeModal(); closeAdmin(); }
+    });
+  </script>
+
+  <!-- ══ ADMIN EDITOR ══ -->
+  <style>
+    #admin-toggle {
+      position: fixed;
+      bottom: 24px;
+      left: 24px;
+      width: 42px; height: 42px;
+      border-radius: 50%;
+      background: var(--white);
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 16px var(--shadow);
+      cursor: pointer;
+      font-size: 1rem;
+      color: var(--text-soft);
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s;
+      z-index: 500;
+      opacity: 0.4;
+    }
+    #admin-toggle:hover { opacity: 1; background: var(--rose-pale); color: var(--rose); }
+
+    #admin-overlay {
+      position: fixed; inset: 0;
+      z-index: 800;
+      display: none;
+      align-items: stretch;
+      justify-content: flex-end;
+    }
+    #admin-overlay.open { display: flex; }
+
+    #admin-backdrop {
+      position: absolute; inset: 0;
+      background: rgba(46,30,24,0.35);
+      backdrop-filter: blur(4px);
+    }
+
+    #admin-panel {
+      position: relative;
+      width: 100%;
+      max-width: 560px;
+      background: var(--white);
+      display: flex;
+      flex-direction: column;
+      box-shadow: -12px 0 48px rgba(46,30,24,0.15);
+      animation: slideInLeft 0.32s cubic-bezier(.2,.85,.4,1) both;
+      overflow: hidden;
+    }
+    @keyframes slideInLeft {
+      from { transform: translateX(100%); }
+      to   { transform: translateX(0); }
+    }
+
+    #admin-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 20px 24px 16px;
+      border-bottom: 1px solid var(--border);
+      background: var(--cream);
+      flex-shrink: 0;
+    }
+    #admin-header h2 {
+      font-size: 1.15rem; font-weight: 700; color: var(--text);
+    }
+    #admin-close {
+      width: 30px; height: 30px; border-radius: 50%;
+      background: var(--bg); border: none; cursor: pointer;
+      font-size: 0.85rem; color: var(--text-mid);
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s;
+    }
+    #admin-close:hover { background: var(--rose-pale); color: var(--rose); }
+
+    #admin-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .admin-section {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px 18px;
+    }
+    .admin-section-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 2.5px;
+      color: var(--text-mid);
+      margin-bottom: 12px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .admin-section-title::after {
+      content: ''; flex: 1; height: 1px; background: var(--border);
+    }
+
+    .admin-field { margin-bottom: 12px; }
+    .admin-field:last-child { margin-bottom: 0; }
+    .admin-label {
+      display: block;
+      font-size: 0.78rem; font-weight: 600;
+      color: var(--text-mid);
+      margin-bottom: 5px;
+    }
+    .admin-input, .admin-textarea {
+      width: 100%;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 9px 12px;
+      font-family: 'Heebo', sans-serif;
+      font-size: 0.9rem;
+      color: var(--text);
+      direction: rtl;
+      transition: border-color 0.2s;
+      resize: none;
+    }
+    .admin-input:focus, .admin-textarea:focus {
+      outline: none;
+      border-color: var(--rose);
+      box-shadow: 0 0 0 3px rgba(232,160,154,0.15);
+    }
+    .admin-textarea { line-height: 1.7; }
+    .admin-hint {
+      font-size: 0.74rem; color: var(--text-soft);
+      margin-top: 4px; line-height: 1.5;
+    }
+
+    .recipe-edit-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+    }
+    .recipe-edit-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 16px;
+      cursor: pointer;
+      background: var(--bg);
+      transition: background 0.2s;
+    }
+    .recipe-edit-header:hover { background: var(--rose-pale); }
+    .recipe-edit-header span { font-size: 0.95rem; font-weight: 600; color: var(--text); }
+    .recipe-edit-header .recipe-edit-arrow {
+      font-size: 0.75rem; color: var(--text-soft);
+      transition: transform 0.2s;
+    }
+    .recipe-edit-card.expanded .recipe-edit-arrow { transform: rotate(180deg); }
+    .recipe-edit-body {
+      display: none;
+      padding: 14px 16px;
+      border-top: 1px solid var(--border);
+      flex-direction: column;
+      gap: 10px;
+    }
+    .recipe-edit-card.expanded .recipe-edit-body { display: flex; }
+
+    #admin-footer {
+      padding: 16px 24px;
+      border-top: 1px solid var(--border);
+      background: var(--cream);
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    #admin-save {
+      flex: 1;
+      padding: 12px;
+      background: var(--rose);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-family: 'Heebo', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.15s;
+    }
+    #admin-save:hover { background: #d98880; }
+    #admin-save:active { transform: scale(0.97); }
+    #admin-save:disabled { background: var(--border); color: var(--text-soft); cursor: not-allowed; }
+
+    #save-status {
+      font-size: 0.82rem;
+      color: var(--text-mid);
+      min-width: 80px;
+      text-align: center;
+    }
+    #save-status.success { color: var(--sage); font-weight: 600; }
+    #save-status.error   { color: #c0392b; font-weight: 600; }
+  </style>
+
+  <button id="admin-toggle" title="עריכה">✏️</button>
+
+  <div id="admin-overlay">
+    <div id="admin-backdrop" onclick="closeAdmin()"></div>
+    <div id="admin-panel">
+      <div id="admin-header">
+        <h2>✏️ עריכת האתר</h2>
+        <button id="admin-close" onclick="closeAdmin()">✕</button>
+      </div>
+
+      <div id="admin-body">
+        <!-- Token -->
+        <div class="admin-section">
+          <div class="admin-section-title">GitHub Token</div>
+          <div class="admin-field">
+            <label class="admin-label">טוקן גישה (נשמר בדפדפן)</label>
+            <input type="password" id="admin-token" class="admin-input"
+                   placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
+            <p class="admin-hint">
+              צור טוקן ב־ GitHub → Settings → Developer settings → Personal access tokens → Fine-grained<br>
+              הרשאות נדרשות: <strong>Contents: Read and write</strong>
+            </p>
+          </div>
+        </div>
+
+        <!-- Title -->
+        <div class="admin-section">
+          <div class="admin-section-title">כותרת ראשית</div>
+          <div class="admin-field">
+            <input type="text" id="admin-title" class="admin-input" placeholder="שם האתר">
+          </div>
+        </div>
+
+        <!-- Recipes -->
+        <div class="admin-section">
+          <div class="admin-section-title">מתכונים</div>
+          <div id="admin-recipes-list" style="display:flex;flex-direction:column;gap:8px;"></div>
+        </div>
+      </div>
+
+      <div id="admin-footer">
+        <button id="admin-save" onclick="adminSave()">💾 שמור ופרסם</button>
+        <span id="save-status"></span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ── Admin state ── */
+    let adminData = null;
+
+    document.getElementById('admin-toggle').addEventListener('click', openAdmin);
+
+    function openAdmin() {
+      const token = localStorage.getItem('gh_token') || '';
+      document.getElementById('admin-token').value = token;
+
+      /* Clone current data into editor */
+      adminData = JSON.parse(JSON.stringify(
+        window._loadedData || FALLBACK
+      ));
+
+      document.getElementById('admin-title').value = adminData.meta?.title || '';
+      buildRecipeEditor(adminData.recipes || []);
+
+      document.getElementById('admin-overlay').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeAdmin() {
+      document.getElementById('admin-overlay').classList.remove('open');
+      document.body.style.overflow = '';
+      document.getElementById('save-status').textContent = '';
+      document.getElementById('save-status').className = '';
+    }
+
+    function buildRecipeEditor(recipes) {
+      const list = document.getElementById('admin-recipes-list');
+      list.innerHTML = '';
+      recipes.forEach((r, idx) => {
+        const card = document.createElement('div');
+        card.className = 'recipe-edit-card';
+        card.dataset.idx = idx;
+        card.innerHTML = `
+          <div class="recipe-edit-header" onclick="toggleRecipeCard(this)">
+            <span>${r.name || 'מתכון ' + (idx+1)}</span>
+            <span class="recipe-edit-arrow">▼</span>
+          </div>
+          <div class="recipe-edit-body">
+            <div class="admin-field">
+              <label class="admin-label">שם המתכון</label>
+              <input type="text" class="admin-input r-name" value="${esc(r.name || '')}">
+            </div>
+            <div class="admin-field">
+              <label class="admin-label">קטגוריה</label>
+              <input type="text" class="admin-input r-category" value="${esc(r.category || '')}">
+            </div>
+            <div class="admin-field">
+              <label class="admin-label">כמות / מנות</label>
+              <input type="text" class="admin-input r-yield" value="${esc(r.yield || '')}">
+            </div>
+            <div class="admin-field">
+              <label class="admin-label">מרכיבים (שורה אחת לכל מרכיב)</label>
+              <textarea class="admin-textarea r-ingredients" rows="4">${esc((r.ingredients||[]).join('\n'))}</textarea>
+            </div>
+            <div class="admin-field">
+              <label class="admin-label">הוראות הכנה (שורה אחת לכל שלב)</label>
+              <textarea class="admin-textarea r-instructions" rows="5">${esc((r.instructions||[]).join('\n'))}</textarea>
+            </div>
+            <div class="admin-field">
+              <label class="admin-label">הערות</label>
+              <textarea class="admin-textarea r-notes" rows="2">${esc(r.notes || '')}</textarea>
+            </div>
+          </div>`;
+        list.appendChild(card);
+      });
+    }
+
+    function esc(str) {
+      return String(str)
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    function toggleRecipeCard(header) {
+      header.closest('.recipe-edit-card').classList.toggle('expanded');
+    }
+
+    function collectAdminData() {
+      const token = document.getElementById('admin-token').value.trim();
+      if (token) localStorage.setItem('gh_token', token);
+
+      const data = JSON.parse(JSON.stringify(adminData));
+      data.meta = data.meta || {};
+      data.meta.title = document.getElementById('admin-title').value.trim();
+
+      document.querySelectorAll('#admin-recipes-list .recipe-edit-card').forEach((card, idx) => {
+        const r = data.recipes[idx];
+        if (!r) return;
+        r.name         = card.querySelector('.r-name').value.trim();
+        r.category     = card.querySelector('.r-category').value.trim();
+        r.yield        = card.querySelector('.r-yield').value.trim();
+        r.ingredients  = card.querySelector('.r-ingredients').value.split('\n').map(s=>s.trim()).filter(Boolean);
+        r.instructions = card.querySelector('.r-instructions').value.split('\n').map(s=>s.trim()).filter(Boolean);
+        r.notes        = card.querySelector('.r-notes').value.trim();
+      });
+      return { token, data };
+    }
+
+    async function adminSave() {
+      const btn    = document.getElementById('admin-save');
+      const status = document.getElementById('save-status');
+      const { token, data } = collectAdminData();
+
+      if (!token) {
+        status.textContent = '⚠️ חסר טוקן';
+        status.className = 'error';
+        return;
+      }
+
+      btn.disabled = true;
+      status.textContent = 'שומר…';
+      status.className = '';
+
+      try {
+        const REPO  = 'OOrhuri/kuba';
+        const FILE  = 'recipes.json';
+        const API   = `https://api.github.com/repos/${REPO}/contents/${FILE}`;
+        const heads = { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' };
+
+        /* Get current SHA */
+        const meta = await fetch(API, { headers: heads });
+        if (!meta.ok) throw new Error('לא ניתן לגשת לקובץ – בדוק את הטוקן');
+        const { sha } = await meta.json();
+
+        /* Encode new content */
+        const json    = JSON.stringify(data, null, 2);
+        const encoded = btoa(unescape(encodeURIComponent(json)));
+
+        /* Commit */
+        const res = await fetch(API, {
+          method: 'PUT',
+          headers: heads,
+          body: JSON.stringify({
+            message: 'Update recipes via site editor',
+            content: encoded,
+            sha
+          })
+        });
+        if (!res.ok) {
+          const err = await res.json();
+          throw new Error(err.message || 'שגיאה בשמירה');
+        }
+
+        /* Update live page data without reload */
+        window._loadedData = data;
+        applyData(data);
+
+        status.textContent = '✓ פורסם!';
+        status.className = 'success';
+        setTimeout(() => { status.textContent = ''; status.className = ''; }, 3000);
+      } catch (e) {
+        status.textContent = '✗ ' + e.message;
+        status.className = 'error';
+      } finally {
+        btn.disabled = false;
+      }
+    }
+  </script>
+
+  <script>
+    /* Patch applyData to also cache loaded data for the editor */
+    const _origApply = applyData;
+    window.applyData = function(data) {
+      window._loadedData = data;
+      _origApply(data);
+    };
   </script>
 </body>
 </html>
