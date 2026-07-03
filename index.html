@@ -690,6 +690,11 @@
     /* ── Inline fallback data (works when opened as a local file) ── */
     const FALLBACK = {
       meta: { title: "המתכונים של סבתא רחל" },
+      personalPhotos: [
+        'Photos/אישי/IMG_2575.JPG','Photos/אישי/IMG_2578.JPG',
+        'Photos/אישי/IMG_2588(1).jpg','Photos/אישי/IMG_2588.JPG',
+        'Photos/אישי/IMG_2589.JPG'
+      ],
       recipes: [
         { id:1, page:1, name:"כדורי בשר", category:"בשר", yield:"כ-8 כדורים",
           ingredients:["בשר טחון","תערובת תבלינים","שמן לטיגון"],
@@ -726,6 +731,21 @@
         document.getElementById('footer-name').textContent = 'לזכרה של ' + nameOnly;
       }
       renderRecipes(data.recipes || []);
+      renderPersonalPhotos(data.personalPhotos || PERSONAL_PHOTOS);
+    }
+
+    function renderPersonalPhotos(photos) {
+      const grid = document.getElementById('memories-grid');
+      grid.innerHTML = '';
+      photos.forEach((src, i) => {
+        const el = document.createElement('div');
+        el.className = 'memory-card';
+        el.innerHTML = `<div class="memory-ring">
+          <img src="${src}" alt="זכרון ${i+1}"
+               onerror="this.closest('.memory-card').style.display='none'">
+        </div>`;
+        grid.appendChild(el);
+      });
     }
 
     /* ── Try fetch (works on server/GitHub Pages), fall back to inline data ── */
@@ -783,16 +803,7 @@
       document.getElementById('kitchen-grid').appendChild(el);
     });
 
-    /* ── Personal photos ── */
-    PERSONAL_PHOTOS.forEach((src, i) => {
-      const el = document.createElement('div');
-      el.className = 'memory-card';
-      el.innerHTML = `<div class="memory-ring">
-        <img src="${src}" alt="זכרון ${i+1}"
-             onerror="this.closest('.memory-card').style.display='none'">
-      </div>`;
-      document.getElementById('memories-grid').appendChild(el);
-    });
+    /* Personal photos rendered by applyData → renderPersonalPhotos */
 
     /* ── Modal ── */
     function openModal(recipe, photo, cat) {
@@ -1102,6 +1113,88 @@
     }
     #save-status.success { color: var(--sage); font-weight: 600; }
     #save-status.error   { color: #c0392b; font-weight: 600; }
+
+    /* ── Image upload ── */
+    .img-upload-row {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 0 4px;
+    }
+    .img-thumb {
+      width: 64px; height: 64px;
+      border-radius: 10px;
+      object-fit: cover;
+      border: 1px solid var(--border);
+      flex-shrink: 0;
+      background: var(--bg);
+    }
+    .img-thumb-placeholder {
+      width: 64px; height: 64px;
+      border-radius: 10px;
+      border: 1px dashed var(--border);
+      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem;
+      background: var(--bg);
+    }
+    .img-pick-btn {
+      flex: 1;
+      padding: 8px 12px;
+      background: var(--bg);
+      border: 1px dashed var(--border);
+      border-radius: 10px;
+      font-family: 'Heebo', sans-serif;
+      font-size: 0.82rem;
+      color: var(--text-mid);
+      cursor: pointer;
+      text-align: center;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .img-pick-btn:hover { border-color: var(--rose); background: var(--rose-pale); color: var(--rose); }
+
+    /* Personal photos grid in editor */
+    .admin-photos-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .admin-photo-item {
+      position: relative;
+      border-radius: 10px;
+      overflow: hidden;
+      aspect-ratio: 1;
+    }
+    .admin-photo-item img {
+      width: 100%; height: 100%;
+      object-fit: cover; display: block;
+    }
+    .admin-photo-remove {
+      position: absolute; top: 3px; right: 3px;
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      background: rgba(46,30,24,0.7);
+      color: white;
+      border: none; cursor: pointer;
+      font-size: 0.65rem;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s;
+    }
+    .admin-photo-remove:hover { background: #c0392b; }
+    .admin-photo-add {
+      aspect-ratio: 1;
+      border-radius: 10px;
+      border: 2px dashed var(--border);
+      background: var(--bg);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 4px;
+      cursor: pointer;
+      font-size: 1.4rem;
+      color: var(--text-soft);
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .admin-photo-add:hover { border-color: var(--rose); background: var(--rose-pale); }
+    .admin-photo-add span { font-size: 0.68rem; font-family: 'Heebo', sans-serif; }
   </style>
 
   <button id="admin-toggle" title="עריכה">✏️</button>
@@ -1155,7 +1248,18 @@
           <div class="admin-section-title">מתכונים</div>
           <div id="admin-recipes-list" style="display:flex;flex-direction:column;gap:8px;"></div>
         </div>
+
+        <!-- Personal photos -->
+        <div class="admin-section">
+          <div class="admin-section-title">תמונות משפחה</div>
+          <div class="admin-photos-grid" id="admin-photos-grid"></div>
+          <p class="admin-hint">לחץ ✕ להסרת תמונה · לחץ + להוספה</p>
+        </div>
       </div>
+
+      <!-- Hidden file inputs -->
+      <input type="file" id="file-recipe-img" accept="image/*" style="display:none">
+      <input type="file" id="file-personal-img" accept="image/*" multiple style="display:none">
 
       <div id="admin-footer">
         <button id="admin-save" onclick="adminSave()">💾 שמור ופרסם</button>
@@ -1168,6 +1272,7 @@
     /* ── Admin state ── */
     let adminData = null;
     const PW_HASH_KEY = 'admin_pw_hash';
+    const pendingUploads = []; /* { path, base64, recipeIdx?, isPersonal? } */
 
     /* ── Password gate ── */
     document.getElementById('admin-toggle').addEventListener('click', () => {
@@ -1240,12 +1345,12 @@
       document.getElementById('admin-token').value = token;
 
       /* Clone current data into editor */
-      adminData = JSON.parse(JSON.stringify(
-        window._loadedData || FALLBACK
-      ));
+      adminData = JSON.parse(JSON.stringify(window._loadedData || FALLBACK));
+      pendingUploads.length = 0;
 
       document.getElementById('admin-title').value = adminData.meta?.title || '';
       buildRecipeEditor(adminData.recipes || []);
+      buildPersonalPhotosEditor(adminData.personalPhotos || PERSONAL_PHOTOS);
 
       document.getElementById('admin-overlay').classList.add('open');
       document.body.style.overflow = 'hidden';
@@ -1265,12 +1370,22 @@
         const card = document.createElement('div');
         card.className = 'recipe-edit-card';
         card.dataset.idx = idx;
+        const currentPhoto = r.foodPhoto || FOOD_PHOTOS[r.page] || FOOD_PHOTOS[r.id] || '';
         card.innerHTML = `
           <div class="recipe-edit-header" onclick="toggleRecipeCard(this)">
             <span>${r.name || 'מתכון ' + (idx+1)}</span>
             <span class="recipe-edit-arrow">▼</span>
           </div>
           <div class="recipe-edit-body">
+            <div class="admin-field">
+              <label class="admin-label">תמונה</label>
+              <div class="img-upload-row">
+                ${currentPhoto
+                  ? `<img class="img-thumb r-photo-preview" src="${esc(currentPhoto)}" onerror="this.outerHTML='<div class=\\'img-thumb-placeholder\\'>🥘</div>'">`
+                  : `<div class="img-thumb-placeholder">🥘</div>`}
+                <button type="button" class="img-pick-btn" onclick="pickRecipeImage(${idx})">📷 החלף תמונה</button>
+              </div>
+            </div>
             <div class="admin-field">
               <label class="admin-label">שם המתכון</label>
               <input type="text" class="admin-input r-name" value="${esc(r.name || '')}">
@@ -1310,6 +1425,129 @@
       header.closest('.recipe-edit-card').classList.toggle('expanded');
     }
 
+    /* ── Personal photos editor ── */
+    function buildPersonalPhotosEditor(photos) {
+      const grid = document.getElementById('admin-photos-grid');
+      grid.innerHTML = '';
+      /* Ensure adminData has up-to-date list */
+      adminData.personalPhotos = [...photos];
+
+      adminData.personalPhotos.forEach((src, i) => {
+        grid.appendChild(makePersonalPhotoTile(src, i));
+      });
+
+      /* Add button */
+      const addBtn = document.createElement('div');
+      addBtn.className = 'admin-photo-add';
+      addBtn.innerHTML = '<span>+</span><span>הוסף</span>';
+      addBtn.onclick = () => document.getElementById('file-personal-img').click();
+      grid.appendChild(addBtn);
+    }
+
+    function makePersonalPhotoTile(src, idx) {
+      const el = document.createElement('div');
+      el.className = 'admin-photo-item';
+      el.dataset.idx = idx;
+      el.innerHTML = `<img src="${esc(src)}" onerror="this.style.opacity='0.3'">
+        <button class="admin-photo-remove" onclick="removePersonalPhoto(${idx})">✕</button>`;
+      return el;
+    }
+
+    function removePersonalPhoto(idx) {
+      adminData.personalPhotos.splice(idx, 1);
+      buildPersonalPhotosEditor(adminData.personalPhotos);
+    }
+
+    /* ── Recipe image picker ── */
+    let _pendingRecipeIdx = null;
+    function pickRecipeImage(idx) {
+      _pendingRecipeIdx = idx;
+      const inp = document.getElementById('file-recipe-img');
+      inp.value = '';
+      inp.click();
+    }
+
+    document.getElementById('file-recipe-img').addEventListener('change', function() {
+      const file = this.files[0];
+      if (!file || _pendingRecipeIdx === null) return;
+      const idx = _pendingRecipeIdx;
+      const reader = new FileReader();
+      reader.onload = e => {
+        const base64 = e.target.result.split(',')[1];
+        const ext    = file.name.split('.').pop().toLowerCase();
+        const path   = `Photos/אוכל/recipe-${adminData.recipes[idx].id}.${ext}`;
+
+        /* Replace any earlier pending upload for same recipe */
+        const existing = pendingUploads.findIndex(u => u.recipeIdx === idx);
+        if (existing !== -1) pendingUploads.splice(existing, 1);
+        pendingUploads.push({ path, base64, recipeIdx: idx });
+
+        /* Update preview thumbnail */
+        const card = document.querySelectorAll('#admin-recipes-list .recipe-edit-card')[idx];
+        const previewWrap = card.querySelector('.img-upload-row');
+        const prev = previewWrap.querySelector('.img-thumb, .img-thumb-placeholder');
+        const img = document.createElement('img');
+        img.className = 'img-thumb r-photo-preview';
+        img.src = e.target.result;
+        prev.replaceWith(img);
+      };
+      reader.readAsDataURL(file);
+    });
+
+    /* ── Personal photos file picker ── */
+    document.getElementById('file-personal-img').addEventListener('change', function() {
+      Array.from(this.files).forEach(file => {
+        const reader = new FileReader();
+        reader.onload = e => {
+          const base64 = e.target.result.split(',')[1];
+          const ext    = file.name.split('.').pop().toLowerCase();
+          const path   = `Photos/אישי/${Date.now()}-${Math.random().toString(36).slice(2,6)}.${ext}`;
+          pendingUploads.push({ path, base64, isPersonal: true });
+
+          /* Add preview tile before the + button */
+          const grid = document.getElementById('admin-photos-grid');
+          const addBtn = grid.lastElementChild;
+          const newIdx = adminData.personalPhotos.length;
+          adminData.personalPhotos.push(path);
+
+          const tile = document.createElement('div');
+          tile.className = 'admin-photo-item';
+          tile.dataset.idx = newIdx;
+          tile.innerHTML = `<img src="${e.target.result}">
+            <button class="admin-photo-remove" onclick="removePersonalPhoto(${newIdx})">✕</button>`;
+          grid.insertBefore(tile, addBtn);
+        };
+        reader.readAsDataURL(file);
+      });
+    });
+
+    /* ── Upload images to GitHub before saving JSON ── */
+    async function uploadPendingImages(token) {
+      const heads = { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' };
+      for (const upload of pendingUploads) {
+        const API = `https://api.github.com/repos/OOrhuri/kuba/contents/${encodeURIComponent(upload.path).replace(/%2F/g,'/')}`;
+        /* Get SHA if file already exists */
+        let sha;
+        try {
+          const check = await fetch(API, { headers: heads });
+          if (check.ok) sha = (await check.json()).sha;
+        } catch {}
+
+        const body = { message: 'Upload image via site editor', content: upload.base64 };
+        if (sha) body.sha = sha;
+        const res = await fetch(API, { method: 'PUT', headers: heads, body: JSON.stringify(body) });
+        if (!res.ok) {
+          const err = await res.json();
+          throw new Error('שגיאה בהעלאת תמונה: ' + (err.message || upload.path));
+        }
+        /* Update adminData with final path */
+        if (upload.recipeIdx !== undefined) {
+          adminData.recipes[upload.recipeIdx].foodPhoto = upload.path;
+        }
+      }
+      pendingUploads.length = 0;
+    }
+
     function collectAdminData() {
       const token = document.getElementById('admin-token').value.trim();
       if (token) localStorage.setItem('gh_token', token);
@@ -1317,6 +1555,7 @@
       const data = JSON.parse(JSON.stringify(adminData));
       data.meta = data.meta || {};
       data.meta.title = document.getElementById('admin-title').value.trim();
+      data.personalPhotos = adminData.personalPhotos || [];
 
       document.querySelectorAll('#admin-recipes-list .recipe-edit-card').forEach((card, idx) => {
         const r = data.recipes[idx];
@@ -1343,10 +1582,15 @@
       }
 
       btn.disabled = true;
-      status.textContent = 'שומר…';
+      status.textContent = 'מעלה תמונות…';
       status.className = '';
 
       try {
+        /* Upload any pending images first */
+        if (pendingUploads.length > 0) await uploadPendingImages(token);
+
+        status.textContent = 'שומר…';
+
         const REPO  = 'OOrhuri/kuba';
         const FILE  = 'recipes.json';
         const API   = `https://api.github.com/repos/${REPO}/contents/${FILE}`;
